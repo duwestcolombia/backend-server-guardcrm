@@ -3,15 +3,22 @@
 //Requires: Librerias necesarias
 var express = require('express');
 var mysql = require('sequelize');
+var bodyParser = require('body-parser');
 
 
 //Inicializar variables:Usamos las librerias
 var app = express();
 
 
+//Body Parser
+// parse application/x-www-form-urlencoded
+app.use(bodyParser.urlencoded({ extended: false }))
+app.use(bodyParser.json())
+
 //Conexion a la base de datos
 // ('database','user', 'password')
-var db = new mysql('controltime', 'root', null, {
+var db = new mysql('guardcrm', 'root', null, {
+    host:'localhost',
     dialect: 'mysql'
 })
 
@@ -24,15 +31,15 @@ db.authenticate().then(()=>{
 })
 
 
+
+//Importar rutas
+var appRoutes = require('./routes/app_routes');
+var usuarioRoutes = require('./routes/usuario_routes');
+
+
 //Rutas
-app.get('/', (req, res, next)=>{
-
-    res.status(200).json({
-        response:true,
-        message: 'Peticion realizada correctamente'
-    })
-
-})
+app.use('/usuario',usuarioRoutes);
+app.use('/',appRoutes);
 
 
 //Escuchar peticiones
